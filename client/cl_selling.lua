@@ -172,6 +172,17 @@ RegisterNetEvent('it-drugs:client:checkSellOffer', function(entity)
 	end
 
 	TriggerEvent('it-drugs:client:showSellMenu', {item = sellItemData.item, price = sellItemData.price, amount = sellAmount, entity = entity, rewardItems = sellItemData.rewardItems})
+	CreateThread(function()
+		Wait(150)
+		repeat
+			Wait(5)
+			if lib.getOpenContextMenu() == nil then
+				ShowNotification(nil, _U('NOTIFICATION__TO__LONG'), 'Error')
+				lib.hideContext(false)
+				SetPedAsNoLongerNeeded(entity)
+			end
+		until (lib.getOpenContextMenu() == nil)
+	end)
 	SetTimeout(Config.SellSettings['sellTimeout']*1000, function()
 		if Config.Debug then lib.print.info('Sell Menu Timeout... Current Menu', lib.getOpenContextMenu()) end
 		if lib.getOpenContextMenu() ~= nil then
